@@ -78,7 +78,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 /app
@@ -116,14 +116,8 @@ The app uses Supabase Auth for authentication:
 - Protected routes via middleware
 - Automatic session refresh
 
-### Password Requirements
 
-- Minimum 8 characters
-- At least one uppercase letter
-- At least one lowercase letter
-- At least one number
-
-## 🗄 Database Schema
+##  Database Schema
 
 The Prisma schema includes:
 
@@ -168,16 +162,6 @@ The app supports light and dark themes:
 - Persistent theme selection
 - CSS variables for theming
 - Smooth theme transitions
-
-
-
-
-
-- [Authentication](./AUTHENTICATION.md) - Auth implementation details
-- [Dashboard Layout](./DASHBOARD_LAYOUT.md) - Dashboard structure
-- [Prisma Schema](./PRISMA_SCHEMA.md) - Database schema documentation
-- [Environment Setup](./ENV_SETUP.md) - Environment variable setup
-- [Code Audit](./CODE_AUDIT.md) - Code review and improvements
 
 
 
