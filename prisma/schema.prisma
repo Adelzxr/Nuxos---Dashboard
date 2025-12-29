@@ -1,0 +1,100 @@
+// Prisma Schema for SaaS Dashboard
+// This schema is designed to work with Supabase Postgres
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum Role {
+  ADMIN
+  USER
+}
+
+enum SubscriptionTier {
+  FREE
+  PRO
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  TRIALING
+}
+
+// User Model
+// Links to Supabase Auth via id (matches auth.users.id)
+model User {
+  id           String    @id // UUID from Supabase Auth
+  email        String    @unique
+  name         String?
+  role         Role      @default(USER)
+  image        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Relations
+  subscription Subscription?
+  projects     Project[]
+
+  // Indexes
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+// Subscription Model
+// One-to-one relationship with User
+model Subscription {
+  id               String             @id @default(uuid())
+  userId           String             @unique
+  tier             SubscriptionTier   @default(FREE)
+  status           SubscriptionStatus @default(ACTIVE)
+  stripeCustomerId String?            @unique // For Stripe integration
+  stripeSubscriptionId String?        @unique
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  cancelAtPeriodEnd  Boolean          @default(false)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@index([userId])
+  @@index([tier])
+  @@index([status])
+  @@index([stripeCustomerId])
+  @@map("subscriptions")
+}
+
+// Project Model
+// Many-to-one relationship with User
+model Project {
+  id          String   @id @default(uuid())
+  userId      String
+  name        String
+  description String?
+  status      String   @default("active") // active, archived, deleted
+  color       String?  // For UI customization (hex color)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@index([userId])
+  @@index([status])
+  @@index([userId, status])
+  @@index([createdAt])
+  @@map("projects")
+}
+
